@@ -16,12 +16,22 @@ document.getElementById('username').addEventListener('input', event => {
     const username = event.target.value;
     if (!checkname.test(username)) return;
 
-    const d = new Date();
-    const today = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).substr(-2) + '-' + ('0' + d.getDate()).substr(-2);
+    sendRequest('https://api.github.com/users/' + username, handleUserResponse);
 
-    sendRequest('https://api.github.com/search/commits?q=author:' + username + '+author-date:' + today, handleResponse);
+    function handleUserResponse(result) {
+        if (result.hasOwnProperty('login')) {
+            const d = new Date();
+            const today = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).substr(-2) + '-' + ('0' + d.getDate()).substr(-2);
 
-    function handleResponse(result) {
+            sendRequest('https://api.github.com/search/commits?q=author:' + username + '+author-date:' + today, handleSearchResponse);
+        }
+        else {
+            document.getElementById('output').innerHTML = 'user not found';
+            return;
+        }
+    }
+
+    function handleSearchResponse(result) {
         if (result.total_count !== 0) {
             document.getElementById('output').innerHTML = 'yes';
         }
