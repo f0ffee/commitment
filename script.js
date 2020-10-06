@@ -40,3 +40,26 @@ document.getElementById('username').addEventListener('input', event => {
         }
     }
 });
+
+document.getElementById('dark-toggle').addEventListener('change', event => {
+    if (event.target.checked) {
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+    } else {
+        document.documentElement.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+    }
+});
+
+document.addEventListener('DOMContentLoaded', event => {
+    const toggle = document.getElementById('dark-toggle');
+    let dark;
+    if (!localStorage.getItem('theme')) {
+        dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+    else {
+        dark = (localStorage.getItem('theme') === 'dark');
+    }
+    toggle.checked = dark;
+    toggle.dispatchEvent(new Event('change'));
+});
